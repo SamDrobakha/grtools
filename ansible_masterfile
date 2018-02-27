@@ -1,0 +1,4 @@
+#!/bin/bash
+#ansible master file
+
+ansible t2micro -i ./hosts --private-key "../amazonlinux_t2micro_01.pem"  -m ping -u ec2-user
