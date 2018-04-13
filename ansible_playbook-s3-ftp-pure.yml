@@ -1,0 +1,57 @@
+ansible [playbook design]
+
+role = s3-ftp
+task = yum-update-all
+task = s3-fuse-install
+task = s3-mount
+task = s3-fstab
+task = vsftpd-install
+task = vsftpd-user
+task = vsftpd-ssl
+handler = restart-vsftpd
+
+
+- hosts: CARLA_aws
+  remote_user: ec2-user
+  vars: 
+    bucket_name: s3fs-001-grtools-cc
+    elastic_IP: 18.197.127.113
+  tasks:
+#------------------------------------------------------------------  
+  - name: yum-update-all
+    yum:
+      name: '*'
+      state: latest
+#------------------------------------------------------------------      
+  - name: s3-fuse-install
+    yum:
+      name: git automake make gcc libstdc++-devel gcc-c++ fuse fuse-devel libcurl-devel curl-devel libxml2-devel mailcap openssl-devel
+      state: latest
+      become: yes
+      become_method: sudo
+    shell: mkdir /tmp/misc
+    git:
+      repo: https://github.com/s3fs-fuse/s3fs-fuse.git
+      dest: /tmp/misc
+      clone: yes
+    shell: autogen.sh && configure && make && make install
+      chdir: /tmp/misc/s3fs-fuse/
+      become: yes
+      become_method: sudo
+#------------------------------------------------------------------   
+  - name: s3-mount
+      shell: mkdir /mnt/$bucket_name
+        become: yes
+        become_method: sudo
+       
+   
+   
+   
+   - name: s3-fstab
+   - name: vsftpd-install
+   - name: vsftpd-user
+   - name: vsftpd-ssl
+     notify: "restart vsftpd"
+  handlers:
+   - name: restart-vsftpd
+     listen: "restart vsftpd"
