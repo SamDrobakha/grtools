@@ -17,41 +17,53 @@ handler = restart-vsftpd
     bucket_name: s3fs-001-grtools-cc
     elastic_IP: 18.197.127.113
   tasks:
-#------------------------------------------------------------------  
+#-------------------------------------------------------------------
   - name: yum-update-all
     yum:
       name: '*'
       state: latest
-#------------------------------------------------------------------      
+    become: yes
+#-------------------------------------------------------------------
   - name: s3-fuse-install
     yum:
       name: git automake make gcc libstdc++-devel gcc-c++ fuse fuse-devel libcurl-devel curl-devel libxml2-devel mailcap openssl-devel
       state: latest
-      become: yes
-      become_method: sudo
     shell: mkdir /tmp/misc
     git:
       repo: https://github.com/s3fs-fuse/s3fs-fuse.git
       dest: /tmp/misc
       clone: yes
-    shell: autogen.sh && configure && make && make install
+    shell: autogen.sh || configure
       chdir: /tmp/misc/s3fs-fuse/
-      become: yes
-      become_method: sudo
-#------------------------------------------------------------------   
+    make:
+      chdir: /tmp/misc/s3fs-fuse/
+      target: install
+    become: yes
+#------------------------------------------------------------------
   - name: s3-mount
-      shell: mkdir /mnt/$bucket_name
-        become: yes
-        become_method: sudo
-       
-   
-   
-   
-   - name: s3-fstab
-   - name: vsftpd-install
-   - name: vsftpd-user
-   - name: vsftpd-ssl
-     notify: "restart vsftpd"
+    shell: mkdir /mnt/{{ bucket_name }}
+    copy:
+      src: /home/sam/proj/gstuff/fuse.conf
+      dest: /etc/fuse.conf
+      backup: yes
+    shell: /usr/local/bin/s3fs {{ bucket_name }} /mnt/{{ bucket_name }} -o iam_role -o allow_other
+    become: yes
+#------------------------------------------------------------------
+  - name: s3-fstab
+    mount:
+      backup: yes
+      path: {{ bucket_name }}
+      src: /mnt/{{ bucket_name }}
+      fstype: fuse.s3fs
+      opts: _netdev,allow_other,iam_role
+      state: present
+    become: yes
+#------------------------------------------------------------------
+
+  - name: vsftpd-install
+  - name: vsftpd-user
+  - name: vsftpd-ssl
+      notify: "restart vsftpd"
   handlers:
-   - name: restart-vsftpd
-     listen: "restart vsftpd"
+  - name: restart-vsftpd
+      listen: "restart vsftpd"
