@@ -1,0 +1,14 @@
+- name: S3 based FTP server on AWS EC2-1
+  hosts: aws_personal
+  remote_user: ec2-user
+  vars: 
+    bucket_name: s3fs-001-grtools-cc
+    elastic_IP: 18.197.127.113
+    ftpuser1_password: 'HASHED_PASSWORD'
+  tasks:
+
+  - name: yum-update-all
+    yum:
+      name: '*'
+      state: latest
+    become: yes

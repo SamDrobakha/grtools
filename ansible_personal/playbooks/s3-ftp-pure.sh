@@ -25,7 +25,10 @@ sudo make install
 sudo yum -y install vsftpd
 #[FTPS]
 sudo mkdir -p /etc/ssl/private
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
+sudo openssl req -x509 -nodes -days 730 -newkey rsa:2048 \
+ -keyout /etc/ssl/private/vsftpd.pem \
+ -out /etc/ssl/private/vsftpd.pem \
+ -subj "/C=cc/ST=Default/L=Default/O=Default/CN=carla.grtools.cc"
 sudo vi /etc/vsftpd/vsftpd.conf
 sudo cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.origin
 sudo vi /etc/vsftpd/vsftpd.conf
@@ -82,9 +85,3 @@ sudo vi /etc/vsftpd.userlist
 #[RESTART, ENABLE VSFTPD]
 sudo systemctl restart vsftpd
 sudo systemctl enable vsftpd
-
-
-
-
-
-
