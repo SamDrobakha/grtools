@@ -1,13 +1,11 @@
-- name: install_mount_s3fs
+#- name: install_mount_s3fs
   # download s3fs, make and install it. Mount bucket and add to fstab
   #Note: s3fs tool allows to mount AWS S3 bucket 
-  hosts: aws_personal
-  remote_user: ec2-user
-  vars: 
-    ansible_prj_location: /home/sam/proj/gstuff/ansible_personal
-    bucket_name: s3fs-001-grtools-cc
-  debugger: on_failed
-  tasks:
+#  hosts: aws_personal
+#  remote_user: ec2-user
+#  vars: 
+   #vars was there - moved to right roles folder
+#  tasks:
 
   - name: s3-fuse-install-1 - install dependencies
     # sudo yum -y install git automake make gcc libstdc++-devel gcc-c++ fuse fuse-devel libcurl-devel curl-devel libxml2-devel mailcap openssl-devel
@@ -18,6 +16,8 @@
 
   - name: s3-fuse-install-2 - create temp folder for git repo
     shell: mkdir /tmp/misc
+    args:
+      creates: /tmp/misc/
 
   - name: s3-fuse-install-3 - download s3fs from github
     # git clone https://github.com/s3fs-fuse/s3fs-fuse.git
@@ -27,40 +27,29 @@
       dest: /tmp/misc
       clone: yes
 
-  - name: s3-fuse-install-3 - prepare git for make, install
-    # cd s3fs-fuse
-    # ./autogen.sh
-    # ./configure
-    # make
-    # sudo make install
-    shell: |
-      cd /tmp/misc/
-      ./configure
-      ./autogen.sh
-      make
-      sudo make install
-
-#  - name: s3-fuse-install-4 - make s3fs
-#    # make
-#    make:
-#      chdir: /tmp/misc
-#
-#  - name: s3-fuse-install-5 - install s3fs
-#    # sudo make install
-#    make:
-#      chdir: /tmp/misc
-#      target: install
-#    become: yes
+  - name: s3-fuse-install-4 - configure, make and install s3fs
+    # pure shell... self-explanatory
+    shell: >
+      /tmp/misc/autogen.sh &&
+      /tmp/misc/configure &&
+      make &&
+      make install
+    args:
+      chdir: /tmp/misc
+    become: yes
 
   - name: s3-mount-1 - mkdir mountpoint directory
     # sudo mkdir -p /mnt/$bucket_name
     shell: "mkdir /mnt/{{ bucket_name }}"
+    args:
+      creates: "/mnt/{{ bucket_name }}"
     become: yes
 
   - name: s3-mount-2 - update fuse filesystem config
     # sudo vi /etc/fuse.conf - uncomment 'user_allow_other'
     copy:
-      src: "{{ ansible_prj_location }}/files/fuse.conf"
+#      src: "{{ ansible_prj_location }}/files/fuse.conf"
+      src: fuse.conf
       dest: /etc/fuse.conf
       backup: yes
     become: yes
@@ -72,8 +61,8 @@
   - name: s3-mount-4 - fstab
     mount:
       backup: yes
-      path: "{{ bucket_name }}"
-      src: "/mnt/{{ bucket_name }}"
+      src: "{{ bucket_name }}"
+      path: "/mnt/{{ bucket_name }}"
       fstype: fuse.s3fs
       opts: _netdev,allow_other,iam_role
       state: present

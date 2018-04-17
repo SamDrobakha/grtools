@@ -1,8 +1,8 @@
-- name: yum_update_all
-  #pb updates all packages
-  hosts: aws_personal
-  remote_user: ec2-user
-  tasks:
+#- name: yum_update_all
+#  #pb updates all packages
+#  hosts: aws_personal
+#  remote_user: ec2-user
+#  tasks:
   
   - name: yum-update-all
     #sudo yum -y update

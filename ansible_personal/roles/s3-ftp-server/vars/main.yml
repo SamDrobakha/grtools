@@ -1,0 +1,6 @@
+ansible_prj_location: /home/sam/proj/gstuff/ansible_personal
+bucket_name: s3fs-001-grtools-cc
+elastic_IP: 18.197.127.113
+ftpuser1_password: $1$1$HEMqaGuDRYFM.lgMogxdf.
+    #pwd - anastasy
+    #to get hash: openssl passwd -salt <salt> -1 <password>
