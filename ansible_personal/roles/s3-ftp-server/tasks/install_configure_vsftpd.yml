@@ -24,7 +24,11 @@
 
 - name: vsftpd-configure 2 - create ceritificate
     # sudo openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
-  shell: openssl req -x509 -nodes -days 730 -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem -subj "/C=cc/ST=Default/L=Default/O=Default/CN=carla.grtools.cc"
+  shell: >
+    openssl req -x509 -nodes -days 730 -newkey rsa:2048 
+    -keyout /etc/ssl/private/vsftpd.pem 
+    -out /etc/ssl/private/vsftpd.pem 
+    -subj "/C=cc/ST=Default/L=Default/O=Default/CN=carla.grtools.cc"
   args:
     creates: /etc/ssl/private/vsftpd.pem
   become: yes
