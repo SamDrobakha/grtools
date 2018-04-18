@@ -1,0 +1,6 @@
+- name: s3-ftp-server-configuration
+  # pb invokes 'common' role which updates packages and installs few new for ansible normal operation
+  hosts: aws_personal
+  remote_user: ec2-user
+  roles:
+    - common
