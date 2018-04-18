@@ -1,12 +1,20 @@
-#- name: yum_update_all
-#  #pb updates all packages
-#  hosts: aws_personal
-#  remote_user: ec2-user
-#  tasks:
-  
-  - name: yum-update-all
+- name: yum-update-all
     #sudo yum -y update
-    yum:
-      name: '*'
-      state: latest
-    become: yes
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+
+- name: yum-install-python-pip
+    #sudo yum -y install python-pip python-wheel
+  yum:
+    name: python-pip,python-wheel
+    state: latest
+  become: yes
+
+- name: pip install boto
+    #sudo pip install boto
+    #'boto' required for ansible module 'ec2_group'
+  pip:
+    name: boto
+  become: yes
