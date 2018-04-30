@@ -16,6 +16,8 @@ for i in range(0, len(sample)):
     else:
         print("list contain illegal objects, exiting")
         break
+
+#result
 print("original list length is: ", len(sample))
 print("zeros count: ", len(b0), " ones count: ", len(c1))
 print(sample)
