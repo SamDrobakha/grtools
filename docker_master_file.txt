@@ -27,6 +27,7 @@ docker commit [container-id] [new-image-name]
 #tagging image (naming it) - useful with commit
 docker tag [cont-id] [image-name]
 
+
 #see logs
 docker logs [container-name]
 
