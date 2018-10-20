@@ -1,3 +1,5 @@
+#sample commands for docker
+
 docker container ls
 docker exec -ti [container-id] bash 
 
