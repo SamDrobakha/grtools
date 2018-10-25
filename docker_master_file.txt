@@ -1,5 +1,8 @@
+#sample commands for docker
+
 docker container ls
 docker exec -ti [container-id] bash 
+
 
 docker pull jenkins/jenkins:lts
 docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
@@ -26,6 +29,7 @@ OR
 docker commit [container-id] [new-image-name]   
 #tagging image (naming it) - useful with commit
 docker tag [cont-id] [image-name]
+
 
 #see logs
 docker logs [container-name]
