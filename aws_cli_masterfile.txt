@@ -5,6 +5,8 @@
 #set global DryRun flag for all commands: can be '--dry-run' or '--no-dry-run'
 aws_dryrun='--no-dry-run'
 
+
+
 #CREATE VPC
 aws ec2 create-vpc $aws_dryrun --cli-input-json file://create-vpc_vpc01.json 1>create-vpc_vpc01.out;
 #write VPC ID to file
