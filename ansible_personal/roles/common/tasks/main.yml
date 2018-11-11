@@ -1,1 +1,2 @@
 - include: yum_update_all.yml
+- include: yum_install_pip_boto.yml

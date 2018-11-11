@@ -1,0 +1,13 @@
+- name: yum-install-python-pip-2
+    #sudo yum -y install python-pip
+  yum:
+    name: python27-pip
+    state: latest
+  become: yes
+
+- name: pip-install-boto-3
+    #sudo pip install boto
+    #'boto' required for ansible module 'ec2_group'
+  pip:
+    name: boto
+  become: yes
