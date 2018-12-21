@@ -7,6 +7,8 @@ I want to write the same as python exercise
 sample = [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1]
 b0 = []
 c1 = []
+d1 = []
+
 
 for i in range(0, len(sample)):
     if sample[i] is 0:
