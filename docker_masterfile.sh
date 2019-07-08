@@ -39,5 +39,5 @@ docker rm [container-name] - removes
 
 
 ! -pack dependencies inside !
-! -dont leave important things in innamed stopped containers !
+! -dont leave important things in unnamed stopped containers !
 ! -volumes are not part of images 

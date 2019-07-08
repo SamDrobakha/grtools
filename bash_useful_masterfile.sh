@@ -2,7 +2,7 @@
 ps -ef | grep $PROCESSID | grep -v grep | sed -E -e 's/[[:blank:]]+/\n/g'
 
 
-#script to do set of commands on remove servers 1by1 (if you can't Ansible) 
+#sample script to do set of commands on remove servers 1by1 (if you can't Ansible) 
 VAR_HOSTS=(
     10.10.10.10
     10.10.10.11
@@ -29,3 +29,15 @@ ssh \
     -L 9031:prod_machine:8161 \
     $jumpbox
 
+
+#macos specific (they dont have 'ip' command)
+#interfaces
+networksetup -listallhardwareports
+#my ip
+ipconfig getifaddr en0
+
+
+#site load
+while true; do curl -s -w %{time_total}\\n -o /site/url/here/; sleep 1; done
+#and
+~/jmeter/apache-jmeter-5.1.1/bin/jmeter -n -t ~/jmeter/test.jmx
