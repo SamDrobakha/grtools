@@ -1,7 +1,6 @@
 #PUPPET INFRASTRUCTURE INSTALLATION
 
 
-
 #1)--MASTER--
 useradd sam
 usermod -aG wheel sam
@@ -60,6 +59,6 @@ systemctl start puppet
 
 
 #4)--directory environments and nodes match to environment--
-
+--see hiera plugin--
 
 
