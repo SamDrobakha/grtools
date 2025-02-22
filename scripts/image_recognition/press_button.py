@@ -1,14 +1,20 @@
+#!/usr/bin/env python
+
+# To check
+# python -c "import torch; print(torch.__version__)"
+# python -c "import easyocr; print('EasyOCR installed successfully')"
+
+# To Run
+# python3 press_button.py --num_region 545 571 39 27 --button_location 483 658 --target_number 90 --click_interval 0.05
+# to exit press "enter"
+
 import argparse
 import pyautogui
 import easyocr
-import keyboard
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+import sys
+import select
 import time
-from bidi.algorithm import get_display
-
-# usage example
-# sudo python3 press_button.py --num_region 545 571 39 27 --button_location 483 658 --target_number 95 --click_interval 0.5
-# to exit press "z"
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 # Initialize the easyocr reader
 reader = easyocr.Reader(['en'])
@@ -16,49 +22,30 @@ reader = easyocr.Reader(['en'])
 def read_number_from_screen(region):
     try:
         print("Taking a screenshot of the specified region.")
-        # Take a screenshot of the specified region
         screenshot = pyautogui.screenshot(region=region)
         screenshot_path = 'temp.png'
-        screenshot.save(screenshot_path)  # Save the screenshot for OCR
+        screenshot.save(screenshot_path)
         print("Screenshot saved as temp.png.")
 
-        # Open the screenshot using PIL
         with Image.open(screenshot_path) as img:
-            print("Opened the screenshot for processing.")
-            # Upscale the image to improve OCR accuracy
+            print("Processing image...")
             img = img.resize((img.width * 2, img.height * 2), Image.LANCZOS)
-            print("Upscaled the image.")
-
-            # Convert to grayscale
             img = img.convert('L')
-            print("Converted the image to grayscale.")
-
-            # Invert the image to make text black on white
             img = ImageOps.invert(img)
-            print("Inverted the image colors.")
-
-            # Enhance the contrast and sharpen the image
             img = ImageEnhance.Contrast(img).enhance(2)
             img = img.filter(ImageFilter.SHARPEN)
-            print("Enhanced the contrast and sharpened the image.")
-
-            # Enhance the brightness of the image
             img = ImageEnhance.Brightness(img).enhance(1.5)
-            print("Enhanced the brightness of the image.")
 
-            # Save the preprocessed image for inspection
             preprocessed_path = 'temp_processed.png'
             img.save(preprocessed_path)
             print(f"Preprocessed image saved as {preprocessed_path}.")
 
-            # Use easyocr to extract text from the screenshot
             print("Starting OCR with easyocr.")
             result = reader.readtext(preprocessed_path, detail=0)
             print("OCR completed.")
             text = ' '.join(result)
             print(f"OCR Text: '{text}'")
 
-            # Extract the number from the text
             number = int(''.join(filter(str.isdigit, text)))
             return number
     except ValueError:
@@ -71,10 +58,14 @@ def read_number_from_screen(region):
 def press_button(button_location):
     try:
         print(f"Clicking the button at location {button_location}.")
-        # Click the button at the specified location
         pyautogui.click(button_location)
     except Exception as e:
         print(f"An error occurred in press_button: {e}")
+
+def check_exit_key():
+    """Check for user input to exit the script."""
+    i, o, e = select.select([sys.stdin], [], [], 0.1)  # Non-blocking input check
+    return bool(i)
 
 def main():
     parser = argparse.ArgumentParser(description="Automate button pressing based on screen OCR.")
@@ -95,12 +86,10 @@ def main():
 
     try:
         while True:
-            # Check if the 'z' key has been pressed
-            if keyboard.is_pressed('z'):
+            if check_exit_key():
                 print("Exit key pressed. Exiting loop.")
                 break
 
-            # Read the number from the screen
             number = read_number_from_screen(number_region)
             if number is not None:
                 print(f"Read number: {number}")
@@ -110,16 +99,16 @@ def main():
                 else:
                     print("Condition not met, pressing the button again.")
                     press_button(button_location)
-                    time.sleep(click_interval)  # Wait briefly before the next click
+                    time.sleep(click_interval)
             else:
                 print("Failed to read number, trying again.")
                 time.sleep(click_interval)
 
             # Reduce sleep time and increase frequency of key press checking
-            for _ in range(int(click_interval * 10)):  # Check frequently in the interval
-                if keyboard.is_pressed('z'):
+            for _ in range(int(click_interval * 10)):  # Frequent checking in the interval
+                if check_exit_key():
                     print("Exit key pressed. Exiting loop.")
-                    break
+                    return  # Use `return` to exit the function immediately
                 time.sleep(0.1)
 
     except Exception as e:
